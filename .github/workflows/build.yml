@@ -1,0 +1,47 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set image version (tag)
+      id: image_version
+      run: echo "gitsha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+    
+    - name: login to Registry 
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ghcr.io/mkodeh2024/express-docker:${{steps.image_version.outputs.gitsha}}
+    - name: publish docker images
+      run: docker push ghcr.io/mkodeh2024/express-docker:${{steps.image_version.outputs.gitsha}}
+    - name: configure docker host
+      uses: khaledez/configure-docker-host@v1
+      with:
+        host: 3.92.234.35
+        user: github
+        ssh-private-key: ${{secrets.DEPLOYMENT_KEY}}
+    - name: deploy
+      run: docker compose -f docker-compose-prod.yml up -d
+      env: 
+        DB_PASSWORD: ${{ secrets.BD_PASSWORD }}
+        GIT_VERSION: ${{ steps.image_version.outputs.gitsha}}
+    - name: print logs
+      if: always() # this step will be executed always even if previous stpes fails
+      run: docker compose logs
