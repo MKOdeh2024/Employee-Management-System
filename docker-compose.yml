@@ -19,16 +19,16 @@ services:
   app:
     profiles:
       - in_docker
-    container_name: express-docker
+    container_name: ems-docker
     build: .
     environment:
       - PORT=80
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=$DB_PASSWORD
-      - DB_NAME=express-docker
+      - DB_NAME=ems-docker
     ports:
-      - "3000:80"
+      - "4000:80"
     healthcheck:
       test: ["CMD", "curl", "http://localhost"]
       timeout: 20s

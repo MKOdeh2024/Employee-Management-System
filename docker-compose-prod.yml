@@ -18,14 +18,14 @@ services:
     restart: always
 
   app:
-    image: ghcr.io/mkodeh2024/express-docker:$GIT_VERSION
+    image: ghcr.io/mkodeh2024/ems-docker:$GIT_VERSION
     restart: always
     environment:
       - PORT=80
       - DB_HOST=mysql
       - DB_USER=root
       - DB_PASSWORD=$DB_PASSWORD
-      - DB_NAME=express-docker
+      - DB_NAME=ems-docker
     ports:
       - "80:80"
     healthcheck:

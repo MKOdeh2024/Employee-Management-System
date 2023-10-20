@@ -67,7 +67,7 @@ status: string
 })
   logoutAt: Date;
 
-  @Column({ type: 'timestamp', 
+  @Column({ type: 'timestamp', precision: 4,
 })
   passwordChangedAt: Date;
 
