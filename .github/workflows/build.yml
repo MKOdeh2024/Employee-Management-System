@@ -30,13 +30,13 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
     - name: publish docker images
-      run: docker push ghcr.io/mkodeh2024/express-docker:${{steps.image_version.outputs.gitsha}}
+      run: docker push ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
     - name: configure docker host
       uses: khaledez/configure-docker-host@v1
       with:
         host: 3.92.234.35
         user: github
-        ssh-private-key: ${{secrets.DEPLOYMENT_KEY}}
+        ssh-private-key: ${{secrets.EMS_KEY}}
     - name: deploy
       run: docker compose -f docker-compose-prod.yml up -d
       env: 
