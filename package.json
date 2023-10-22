@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "jest",
-    "build-tsc": "tsc",
+    "build-tsc": "tsc -w",
     "run-watch": "nodemon ./dist/app.js",
     "dev": "concurrently \"npm:build-tsc\"  \"npm:run-watch\""
   },
