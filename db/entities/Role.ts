@@ -10,7 +10,7 @@ import {
   from "typeorm";
 
 import { Permission } from "./Permission.js";
-import { User } from "./User.js";
+//import { User } from "./User.js";
 import { Employee } from "./Employee.js";
 
 @Entity('roles')
