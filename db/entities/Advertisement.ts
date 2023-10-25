@@ -10,8 +10,8 @@ import {
     Max,
 } from "class-validator"
 
-@Entity('generalization')
-export class Generalization extends BaseEntity {
+@Entity('advertisements')
+export class Advertisement extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 

@@ -50,7 +50,7 @@ status: AdvanceState
 type: AdvanceType
 
 @ManyToOne(() => Employee, (emp) => emp.advances,{ cascade: true, eager: true })
-employee: number
+employee?: number
 
 
   @CreateDateColumn({

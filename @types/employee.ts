@@ -1,6 +1,6 @@
 export namespace EMPLOYEE {
-  export interface Item {
-    id: string;
+  export interface createEmployee {
+    id: number;
     firstName: string;
     midName: string;
     lastName: string;
@@ -15,6 +15,7 @@ export namespace EMPLOYEE {
     street?:string;
     section:number;
     status:string;
+    gender:string;
   }
   export interface Role {
     id: number;
@@ -38,4 +39,30 @@ export namespace EMPLOYEE {
     employeeId:number;
     role:string;
   }
+
+
+
+  export interface permissionAssign{
+    roleId:number;
+    permission:string;
+  }
+  export interface updateEmployee{
+    id:number;
+    phoneNumber?:string;
+    salary?:number;
+    section?:number;
+  }
+
+  export interface updatePersonalInformation {
+    id: number;
+    firstName?: string;
+    midName?: string;
+    lastName?: string;
+    email?: string;
+    phoneNumber?:string;
+    city?:string;
+    street?:string;
+    status?:string;
+  }
+
 }

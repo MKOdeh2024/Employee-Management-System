@@ -4,7 +4,7 @@ import { Role } from "./entities/Role.js";
 import { Permission } from "./entities/Permission.js";
 import { Advance } from "./entities/Advance.js";
 import { LeavePermission } from "./entities/LeavePermission.js";
-import { Generalization } from "./entities/Generalization.js";
+import { Advertisement } from "./entities/Advertisement.js";
 import { Section } from "./entities/Section.js";
 import { SectionManager } from "./entities/SectionManager.js";
 import { Vacation } from "./entities/Vacation.js";
@@ -23,7 +23,7 @@ const dataSource = new DataSource({
     Permission,
     Advance,
     LeavePermission,
-    Generalization,
+    Advertisement,
     SectionManager,
     Vacation
   ],
