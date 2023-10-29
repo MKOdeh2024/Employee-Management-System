@@ -23,7 +23,7 @@ router.post('/',createEmployeeValidator,async (req:express.Request, res:express.
 });
 
 router.get('/employee',getEmployeeValidator,(req:express.Request, res:express.Response, next:express.NextFunction) => {
-  getEmployee(req.body.id).then((data) => {
+  getEmployee(req.body.id).then((data:any) => {
     res.send(data)
   }).catch(err => {
     console.error(err);
