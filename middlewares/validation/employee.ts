@@ -248,7 +248,7 @@ const createEmployeeValidator = [
     check('role')
     .notEmpty()
     .withMessage('role is required')
-    .equals('admin')
+    .equals('employee')
     .withMessage("role should be 'employee'"),
   check('DOB')
     .notEmpty()

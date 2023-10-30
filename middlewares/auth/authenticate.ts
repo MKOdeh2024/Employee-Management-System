@@ -9,7 +9,6 @@ const authenticate = async (
 ) => {
   const token = req.headers['authorization'] || '';
   let tokenIsValid;
-  console.log(token);
   try {
     tokenIsValid = jwt.verify(token, process.env.JWT_SECRET_KEY||'');
   } catch (error) {console.log(error) }
@@ -18,9 +17,10 @@ const authenticate = async (
     const decoded = jwt.decode(token, { json: true });
     const employee = await Employee.findOneBy({ email: decoded?.email || '' })
     res.locals.employee = employee;
+    console.log("authenticate")
     next();
   } else {
-    res.status(401).send("You are Unauthorized!");
+    res.status(401).send("You are Unauthenticated!");
   }
 }
 
