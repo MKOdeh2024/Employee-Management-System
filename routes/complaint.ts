@@ -1,15 +1,15 @@
 import express from 'express';
 import { getComplaint, getComplaints, insertComplaint, deleteComplaint, updateComplaint, } from '../controllers/complaint.js';
-import { createLeavePermissionValidator, deleteLeavePermissionValidator, getLeavePermissionValidator, updateLeavePermissionValidator } from '../middlewares/validation/leavePermission.js';
 import { Complaint } from '../db/entities/Complaint.js';
 import { authenticate } from '../middlewares/auth/authenticate.js';
 import { authorize } from '../middlewares/auth/authorize.js';
+import { createComplaintValidator, deleteComplaintValidator, getComplaintValidator, updateComplaintValidator } from '../middlewares/validation/complaint.js';
 
 
 
 var router = express.Router();
 
-router.post('/',authenticate,authorize('post_complaint'), createLeavePermissionValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.post('/', authenticate, authorize('post_complaint'), createComplaintValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.log(req.body);
   insertComplaint(res.locals.employee.id, req.body).then((data) => {
     res.status(201).send(data)
@@ -19,7 +19,7 @@ router.post('/',authenticate,authorize('post_complaint'), createLeavePermissionV
   });
 });
 
-router.get('/complaint',authenticate,authorize('get_complaint'), getLeavePermissionValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/complaint', authenticate, authorize('get_complaint'), getComplaintValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   getComplaint(res.locals.employee.id, req.body.id).then((data) => {
     if (data === 1) {
       res.send("complaint not found!")
@@ -34,7 +34,7 @@ router.get('/complaint',authenticate,authorize('get_complaint'), getLeavePermiss
   });
 });
 
-router.get('/complaints',authenticate,authorize('get_allComplaint'), (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/complaints', authenticate, authorize('get_allComplaint'), (req: express.Request, res: express.Response, next: express.NextFunction) => {
   getComplaints(res.locals.employee.id).then((data) => {
     if (data === 1) {
       res.send("there is no complaint requests for you")
@@ -48,7 +48,7 @@ router.get('/complaints',authenticate,authorize('get_allComplaint'), (req: expre
   });
 });
 
-router.delete('/',authenticate,authorize('delete_complaint'), deleteLeavePermissionValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.delete('/', authenticate, authorize('delete_complaint'), deleteComplaintValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   deleteComplaint(res.locals.employee.id, req.body.id).then((data) => {
     if (data === 1) {
       res.send("complaint not found")
@@ -60,7 +60,7 @@ router.delete('/',authenticate,authorize('delete_complaint'), deleteLeavePermiss
   });
 });
 
-router.put('/',authenticate,authorize('update_complaint'), updateLeavePermissionValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.put('/', authenticate, authorize('update_complaint'), updateComplaintValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const complaint = await Complaint.findOneBy({ id: req.body.id });
   if (complaint) {
     updateComplaint(res.locals.employee.id, req.body).then((data) => {
