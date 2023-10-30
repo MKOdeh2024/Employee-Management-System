@@ -10,6 +10,8 @@ import advancesRouter from './routes/advances.js';
 import vacationsRouter from './routes/vacations.js';
 import advertisementsRouter from './routes/advertisement.js';
 import leavePermissionsRouter from './routes/leavePermission.js';
+import complaintsRouter from './routes/complaint.js';
+
 import authRouter from './routes/auth.js'
 import adminRouter from './routes/admin.js'
 import {setUp} from './middlewares/setup/setup.js'
@@ -39,6 +41,7 @@ app.use('/sections', sectionsRouter);
 app.use('/permissions', permissionsRouter);
 app.use('/advertisements', advertisementsRouter);
 app.use('/leavePermissions', leavePermissionsRouter);
+app.use('/complaints', complaintsRouter);
 app.use('/roles', rolesRouter);
 app.use('/auth',authRouter );
 app.use('/admin',adminRouter );

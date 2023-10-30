@@ -27,6 +27,7 @@ router.post('/', authenticate, allowedTo('manager'), createEmployeeValidator, as
 
 });
 
+
 router.post('/', authenticate, allowedTo('manager'), createEmployeeValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const section = await Section.findOneBy({ id: req.body.section });
   if (section) {
