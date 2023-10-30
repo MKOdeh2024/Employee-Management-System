@@ -1,4 +1,5 @@
 import { VACATION } from "../@types/vacation.js";
+import { Employee } from "../db/entities/Employee.js";
 import { Vacation } from "../db/entities/Vacation.js";
 
 
@@ -95,11 +96,95 @@ const updateVacation= async (employeeId:number,payload:VACATION.updateVacation) 
   
   };
 }
+const UpdateVacationStatus = async (vacationId:number,status:string) => {
+  const vacation = await  Vacation.findOneBy({id:vacationId});
+  if(vacation){
+    if(vacation.status ==="waiting"){
+      const employee = await Employee.findOneBy({id:Number(vacation.employee!.id)});
+      if(employee){
+        console.log(employee.vacationDays)
+        const VacationDays =employee.vacationDays;
+        const daysDifference = VacationDays-vacation.duration;
+          console.log('here0');
+          if(employee.vacationDays === 0){
+            console.log(employee.vacationDays)
+            vacation.status ='rejected';
+            vacation.save()
+            .then(result =>{
+              if(result){
+                return 4;
+              }
+              else return 0;
+            }).catch(err => {
+              console.log(err.message);
+              return;
+            })
+            
+          }else if(daysDifference < 0){
+            vacation.status ='rejected';
+            vacation.save()
+            .then(result => {
+              if(result){
+                return 4;
+              }
+              else
+              return 0;
+            }).catch(err => {
+              console.log(err.message);
+              return;
+            })
+          }
+          else if(status==="accepted"){
+            vacation.status=status;
+            vacation.save()
+            .then(async result => {
+              if(result){
+                employee.vacationDays =employee.vacationDays -vacation.duration;
+                employee.save()
+                .then(result => {
+                  if(result){
+                    return 4;
+                  }
+                  else
+                  return 1;
+                }).catch(err => {
+                  console.log(err.message);
+                return;
+                })
+              }
+              else
+              return 0;
+            })
+            .catch(err => {
+              console.log(err.message);
+              return;
+            });
+          }
+          else{
+            vacation.status=status;
+            vacation.save()
+            .then(result => {
+              if(result){
+                return 4;
+              }
+              else
+                return 0;
+            })
+            .catch(err => {
+              console.log(err.message);
+              return;
+            });
+          }
+      }else return 2;
+    }else return 1;
+  }else return 0;
+};
 
 export {
     insertVacation,
     getVacation,
     getVacations,
     deleteVacation,
-    updateVacation
+    updateVacation,
+    UpdateVacationStatus
   }

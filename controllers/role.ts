@@ -2,9 +2,7 @@ import { EMPLOYEE } from "../@types/employee.js";
 import { Role } from "../db/entities/Role.js";
 import { Permission } from "../db/entities/Permission.js";
 import { Any, In } from "typeorm";
-
 import { Employee } from "../db/entities/Employee.js";
-import { Name } from "../db/entities/Name.js";
 
 
 

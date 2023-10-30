@@ -1,12 +1,12 @@
 import express from 'express';
 import {  assignPermission, insertPermission } from '../controllers/permission.js';
 import { authorize } from '../middlewares/auth/authorize.js';
-import { authenticate } from '../middlewares/auth/authenticate.js';
+import { allowedTo, authenticate } from '../middlewares/auth/authenticate.js';
 var router = express.Router();
 
 
 
-router.post('/permission', (req, res, next) => {
+router.post('/permission',authenticate,allowedTo('manager'), (req, res, next) => {
   insertPermission(req.body).then((data) => {
     res.status(201).send(data)
   }).catch(err => {
@@ -16,7 +16,7 @@ router.post('/permission', (req, res, next) => {
 });
 
 
-router.post('/assignPermission',(req, res, next) => {
+router.post('/assignPermission',authenticate,allowedTo('manager'),(req, res, next) => {
   assignPermission(req.body).then((data) => {
     res.status(201).send(data)
   }).catch(err => {

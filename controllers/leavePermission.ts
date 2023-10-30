@@ -1,6 +1,7 @@
 import { LEAVE } from "../@types/leavePermission.js";
-import { LeavePermission } from "../db/entities/LeavePermission.js";
-
+import { Employee } from "../db/entities/Employee.js";
+import { LeavePermission, LeavePermissionState } from "../db/entities/LeavePermission.js";
+import express from 'express'
 
 const insertLeavePermission = async (employeeId:number,payload: LEAVE.Item) => {
     try {
@@ -102,10 +103,98 @@ const updateLeavePermission= async (employeeId:number,payload:LEAVE.updateLeaveP
   };
 }
 
+const UpdateLeavePermissionStatus = async (permissionId:number,status:string) => {
+    const leavePermission = await  LeavePermission.findOneBy({id:permissionId});
+    if(leavePermission){
+      if(leavePermission.status ==="waiting"){
+        const employee = await Employee.findOneBy({id:Number(leavePermission.employee!.id)});
+        if(employee){
+          console.log(employee.vacationDays)
+          const hours = employee.leaveHours + leavePermission.duration;
+          if(hours>=8 && status ==="accepted"){
+            if(employee.vacationDays === 0){
+              leavePermission.status ='rejected';
+              leavePermission.save()
+              .then(result =>{
+                if(result){
+                  return 8;
+                }
+                else return 0;
+              }).catch(err => {
+                console.log(err.message);
+                return;
+              })
+              
+            }
+            else{
+              const HoursDifference = hours-8;
+            var vacationDays =employee.vacationDays;
+            vacationDays--;
+            employee.leaveHours =HoursDifference;
+            employee.vacationDays=vacationDays;
+            employee.save()
+            .then(async result => {
+              if(result){
+                leavePermission.status ='accepted';
+                const updated = await leavePermission.save()
+                if(updated){
+                  return 8;
+                }
+                else return 0;
+              }
+              else
+                return 2;
+            }).catch(err => {
+              console.log(err.message);
+              return;
+            })
+            }
+          }
+          else if(hours < 8 ){
+            employee.leaveHours=hours;
+            console.log(employee.leaveHours)
+            const result = await employee.save()
+            console.log(result)
+            if(result){
+                
+                leavePermission.status =status;
+                const updated = await leavePermission.save()
+                if(updated){
+                  return 8;
+                }
+                else return 0;
+              }
+              else
+              return 2;
+            
+          }
+          else if(hours>=8 && status==="rejected"){
+            leavePermission.status=status;
+            leavePermission.save()
+            .then(result => {
+              if(result){
+                return 4;
+              }
+              else
+              return 0;
+            })
+            .catch(err => {
+              console.log(err.message);
+              return;
+            });
+          }
+          else return 3;
+        }else return 2;
+      }else return 1;
+    }else return 0;
+};
+
+
 export {
     insertLeavePermission,
     getLeavePermission,
     getLeavePermissions,
     deleteLeavePermission,
-    updateLeavePermission
+    updateLeavePermission,
+    UpdateLeavePermissionStatus
   }

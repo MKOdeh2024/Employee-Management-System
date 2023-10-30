@@ -40,7 +40,7 @@ export class Advance extends BaseEntity {
     enum: ["waiting", "accepted", "rejected"],
     default: "waiting"
 })
-status: AdvanceState
+status: string
 
 @Column({
   type: "enum",

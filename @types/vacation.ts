@@ -3,6 +3,7 @@ export namespace VACATION {
     duration:number;
     suggestionDate:Date;
     reason:string;
+    type?:string
   }
 
   export interface updateVacation {

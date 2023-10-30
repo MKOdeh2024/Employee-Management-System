@@ -1,6 +1,7 @@
 
 import { ADVANCE } from "../@types/advance.js";
 import { Advance } from "../db/entities/Advance.js";
+import { Employee } from "../db/entities/Employee.js";
 
 
 
@@ -43,15 +44,29 @@ const insertExceptionalAdvance = async (employeeId:number,payload: ADVANCE.excep
 }
 }
 
-const getAdvances = async (employeeId:number) => {
+const getAdvances = async (employeeId:number,payload:ADVANCE.getAdvances) => {
   const empId = employeeId;
   try {
-    const advances = await Advance.find({where :{employee:empId},order:{id: "ASC"}})
+    const page = parseInt(payload.page)||0;
+    const pageSize = parseInt(payload.pageSize)||5;
+    const [advances, total] = await Advance.findAndCount({
+      skip: pageSize * (page - 1),
+      take: pageSize,
+      order: {
+        createdAt: 'ASC'
+      },where:{employee:empId}
+    })
     if(advances){
       const adv = advances.map(({employee, ...rest}) => {
         return rest;
       });
-      return adv;
+      return {
+        page,
+        pageSize: advances.length,
+        total,
+        adv
+      };
+
     }
     else 
       return 1;
@@ -153,6 +168,20 @@ const updateExceptionalAdvane= async (employeeId:number,payload:ADVANCE.updateEx
 
 }}
 
+const UpdateAdvanceStatus = async (vacationId:number,status:string) => {
+  const advance = await  Advance.findOneBy({id:vacationId});
+  console.log('here8');
+  if(advance){
+    if(advance.status ==="waiting"){
+      advance.status = status;
+      const result = await advance.save()
+      if(result){
+        return result
+      }else return 2
+    }else return 1 ;
+  }else return 0;
+};
+
 
 export {
   insertExceptionalAdvance,
@@ -161,5 +190,6 @@ export {
   updateNormalAdvane,
   getAdvance,
   getAdvances,
-  updateExceptionalAdvane
+  updateExceptionalAdvane,
+  UpdateAdvanceStatus
 }

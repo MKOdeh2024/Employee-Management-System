@@ -1,20 +1,18 @@
-import { BaseEntity,OneToMany,ManyToOne,ManyToMany,JoinTable, BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Relation } from "typeorm";
+import { BaseEntity,OneToMany,ManyToOne,ManyToMany,JoinTable, BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Relation, OneToOne } from "typeorm";
 import bcrypt from 'bcrypt'
-import { Name } from "./Name.js";
 import { Advance } from "./Advance.js";
 import { Vacation } from "./Vacation.js";
 import { LeavePermission } from "./LeavePermission.js";
 import { Section } from "./Section.js";
 import { Role } from "./Role.js";
+import { ManagerProfile } from "./ManagerProfile.js";
+import { Complaint } from "./Complaint.js";
 
 
 @Entity('employees')
 export class Employee extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
-
-  // @Column(() => Name)
-  // name: Name
 
   @Column({ nullable: false})
   firstName: string;
@@ -73,8 +71,7 @@ status: string
 })
   logoutAt: Date;
 
-  @Column({ type: 'timestamp', 
-})
+  @Column()
   passwordChangedAt: Date;
 
   @Column({ default:0})
@@ -92,9 +89,11 @@ status: string
     @OneToMany(type => LeavePermission, leave => leave.employee)
     leavePermissions:  number[];
 
+    @OneToMany(type => Complaint, complaint => complaint.employee)
+    complaints: number[];
 
     @ManyToOne(() => Section, (sec) => sec.employees)
-  section: number
+  section?: number
 
   @ManyToMany(() => Role, { cascade: true, eager: true })
   @JoinTable()

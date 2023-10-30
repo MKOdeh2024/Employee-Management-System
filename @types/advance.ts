@@ -26,5 +26,10 @@ export namespace ADVANCE {
       installmentValue?:number;
       reason?:string;
     }
+
+    export interface getAdvances {
+      page:string;
+      pageSize:string;
+    }
   
   }

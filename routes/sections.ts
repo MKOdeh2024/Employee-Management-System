@@ -1,12 +1,12 @@
 import express from 'express';
-import { authenticate } from '../middlewares/auth/authenticate.js';
+import { allowedTo, authenticate } from '../middlewares/auth/authenticate.js';
 import { authorize } from '../middlewares/auth/authorize.js';
 import { deleteSection, getSection, getSections, insertSection, updateSection } from '../controllers/section.js';
 import { createSectionValidator, deleteSectionValidator, getSectionValidator, updateSectionValidator } from '../middlewares/validation/section.js';
 
 var router = express.Router();
 
-router.post('/',createSectionValidator,async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.post('/',authenticate,allowedTo('manager'),createSectionValidator,async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     insertSection(req.body).then((data) => {
       res.send(data)
     }).catch(err => {
@@ -15,7 +15,7 @@ router.post('/',createSectionValidator,async (req: express.Request, res: express
     });
 });
 
-router.get('/section',getSectionValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/section',authenticate,allowedTo('manager'),getSectionValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
   getSection(req.body.name).then((data) => {
     if(data ===1){
       res.send("section not found!")
@@ -30,7 +30,7 @@ router.get('/section',getSectionValidator,(req: express.Request, res: express.Re
   });
 });
 
-router.get('/sections',(req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/sections',authenticate,allowedTo('manager'),(req: express.Request, res: express.Response, next: express.NextFunction) => {
   getSections().then((data) => {
     if(data ===1){
       res.send("there is no sections")
@@ -44,7 +44,7 @@ router.get('/sections',(req: express.Request, res: express.Response, next: expre
   });
 });
 
-router.delete('/',deleteSectionValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.delete('/',authenticate,allowedTo('manager'),deleteSectionValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
   deleteSection(req.body.id).then((data) => {
     if(data ===2){
       res.send("can't delete section because it have employees")
@@ -58,7 +58,7 @@ router.delete('/',deleteSectionValidator,(req: express.Request, res: express.Res
   });
 });
 
-router.put('/',updateSectionValidator,async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.put('/',authenticate,allowedTo('manager'),updateSectionValidator,async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     updateSection(req.body).then((data) => {
       if(data === 2){
         res.send("something went wrong, when updating section")

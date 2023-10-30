@@ -10,10 +10,13 @@ import advancesRouter from './routes/advances.js';
 import vacationsRouter from './routes/vacations.js';
 import advertisementsRouter from './routes/advertisement.js';
 import leavePermissionsRouter from './routes/leavePermission.js';
+import authRouter from './routes/auth.js'
+import adminRouter from './routes/admin.js'
+import {setUp} from './middlewares/setup/setup.js'
 
 
 
-import  './db/dataSource.js';
+import './db/dataSource.js';
 import { authenticate } from './middlewares/auth/authenticate.js';
 
 
@@ -25,29 +28,28 @@ app.use(cors({
   origin: "http://localhost:3000"
 }));
 
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/employees',employeesRouter);
-app.use('/vacations',authenticate,vacationsRouter);
-app.use('/advances',authenticate,advancesRouter);
-app.use('/sections',authenticate,sectionsRouter);
-app.use('/permissions' ,permissionsRouter);
-app.use('/advertisements',authenticate,advertisementsRouter);
-app.use('/leavePermissions',authenticate,leavePermissionsRouter);
+app.use('/employees', employeesRouter);
+app.use('/vacations', vacationsRouter);
+app.use('/advances', advancesRouter);
+app.use('/sections', sectionsRouter);
+app.use('/permissions', permissionsRouter);
+app.use('/advertisements', advertisementsRouter);
+app.use('/leavePermissions', leavePermissionsRouter);
 app.use('/roles', rolesRouter);
+app.use('/auth',authRouter );
+app.use('/admin',adminRouter );
 
-
-app.all('*', (req, res, next) => {
+app.use('*', (req, res, next) => {
   res.status(400).send(`Can't find this route: ${req.originalUrl}`);
 });
 
-app.use((req, res, next) => {
-  next(createError(404));
-});
 
 app.listen(PORT, () => {
   console.log(`App is listening on port ${PORT}`);
 });
 
 export default app;
- 

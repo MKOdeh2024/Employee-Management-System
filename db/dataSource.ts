@@ -6,8 +6,11 @@ import { Advance } from "./entities/Advance.js";
 import { LeavePermission } from "./entities/LeavePermission.js";
 import { Advertisement } from "./entities/Advertisement.js";
 import { Section } from "./entities/Section.js";
-import { SectionManager } from "./entities/SectionManager.js";
 import { Vacation } from "./entities/Vacation.js";
+import { ManagerProfile } from "./entities/ManagerProfile.js";
+import { SectionManagerProfile } from "./entities/SectionManagerProfile.js";
+import { AdminProfile } from "./entities/AdminProfile.js";
+import { Complaint } from "./entities/Complaint.js";
 
 const dataSource = new DataSource({
   type: 'mysql',
@@ -24,8 +27,11 @@ const dataSource = new DataSource({
     Advance,
     LeavePermission,
     Advertisement,
-    SectionManager,
-    Vacation
+    Vacation,
+    ManagerProfile,
+    SectionManagerProfile,
+    AdminProfile,
+    Complaint
   ],
   migrations: ['./**/migration/*.ts'],
   synchronize: true,

@@ -2,12 +2,13 @@ import express from 'express';
 import { deleteAdvertisement, getAdvertisement, getAdvertisements, insertAdvertisement, updateAdvertisement } from '../controllers/advertisement.js';
 import { Advertisement } from '../db/entities/Advertisement.js';
 import { createAdvertisementValidator, deleteAdvertisementValidator, getAdvertisementValidator, updateAdvertisementValidator } from '../middlewares/validation/advertisement.js';
+import { allowedTo, authenticate } from '../middlewares/auth/authenticate.js';
 
 
 
 var router = express.Router();
 
-router.post('/',createAdvertisementValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.post('/',authenticate,allowedTo('manager'),createAdvertisementValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.log("here")
     console.log(res.locals.employee.id)
     console.log(req.body)
@@ -19,7 +20,7 @@ router.post('/',createAdvertisementValidator, (req: express.Request, res: expres
     });
 });
 
-router.get('/advertisement',getAdvertisementValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/advertisement',authenticate,allowedTo('manager'),getAdvertisementValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
     getAdvertisement(req.body.id).then((data) => {
       if(data ===1){
         res.send("advertisement not found!")
@@ -34,7 +35,7 @@ router.get('/advertisement',getAdvertisementValidator,(req: express.Request, res
     });
 });
 
-router.get('/advertisements',(req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/advertisements',authenticate,allowedTo('manager'),(req: express.Request, res: express.Response, next: express.NextFunction) => {
       getAdvertisements().then((data) => {
         if(data ===1){
           res.send("there is no advertisements posted yet!")
@@ -48,7 +49,7 @@ router.get('/advertisements',(req: express.Request, res: express.Response, next:
       });
 });
 
-router.delete('/',deleteAdvertisementValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.delete('/',authenticate,allowedTo('manager'),deleteAdvertisementValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
         deleteAdvertisement(req.body.id).then((data) => {
           if(data ===1){
             res.send("advertisement not found")
@@ -60,7 +61,7 @@ router.delete('/',deleteAdvertisementValidator,(req: express.Request, res: expre
         });
 });
 
-router.put('/',updateAdvertisementValidator,async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.put('/',authenticate,allowedTo('manager'),updateAdvertisementValidator,async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const adv = await Advertisement.findOneBy({id:req.body.id});
     if(adv){
       updateAdvertisement(req.body).then((data) => {
