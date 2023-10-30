@@ -2,9 +2,7 @@ import { EMPLOYEE } from "../@types/employee.js";
 import { Role } from "../db/entities/Role.js";
 import { Permission } from "../db/entities/Permission.js";
 import { Any, In } from "typeorm";
-
 import { Employee } from "../db/entities/Employee.js";
-import { Name } from "../db/entities/Name.js";
 
 
 
@@ -29,8 +27,6 @@ const insertRole = async (payload: EMPLOYEE.Role) => {
 
 const assignRole = async (payload: EMPLOYEE.roleAssign) => {
   console.log(payload);
-  // if(role){
-    // const name = payload.first+payload.mid+payload.last
   const employee = await Employee.findOneBy({
     id: payload.employeeId
   });

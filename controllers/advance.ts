@@ -1,6 +1,9 @@
 
 import { ADVANCE } from "../@types/advance.js";
 import { Advance } from "../db/entities/Advance.js";
+import { Employee } from "../db/entities/Employee.js";
+
+
 
 const insertNormalAdvance = async (employeeId:number,payload: ADVANCE.normalAdvance) => {
     try {
@@ -41,16 +44,29 @@ const insertExceptionalAdvance = async (employeeId:number,payload: ADVANCE.excep
 }
 }
 
-
-const getAdvances = async (employeeId:number) => {
+const getAdvances = async (employeeId:number,payload:ADVANCE.getAdvances) => {
   const empId = employeeId;
   try {
-    const advances = await Advance.find({where :{employee:empId},order:{id: "ASC"}})
+    const page = parseInt(payload.page)||0;
+    const pageSize = parseInt(payload.pageSize)||5;
+    const [advances, total] = await Advance.findAndCount({
+      skip: pageSize * (page - 1),
+      take: pageSize,
+      order: {
+        createdAt: 'ASC'
+      },where:{employee:empId}
+    })
     if(advances){
       const adv = advances.map(({employee, ...rest}) => {
         return rest;
       });
-      return adv;
+      return {
+        page,
+        pageSize: advances.length,
+        total,
+        adv
+      };
+
     }
     else 
       return 1;
@@ -59,11 +75,11 @@ const getAdvances = async (employeeId:number) => {
   }
 };
 
-
 const getAdvance = async (empId:number,advId:number) => {
   try {
     const advance =await Advance.findOne({where:{id:advId,employee:empId}});
     if(advance){
+      delete advance["employee"];
       return advance;
     }
     else 
@@ -72,16 +88,13 @@ const getAdvance = async (empId:number,advId:number) => {
     return 0;
   }
 };
-
-
-
 
 const deleteAdvane = async (employeeId:number, advid:number) => {
   const advId = advid;
   const empId = employeeId;
   try {
     const advance =await Advance.delete({id:advId,employee:empId,status:"waiting"});
-    if(advance){
+    if(advance.affected !=0){
       return advance;
     }
     else 
@@ -92,63 +105,82 @@ const deleteAdvane = async (employeeId:number, advid:number) => {
 };
 }
 
-const updateNormalAdvane = async (employeeId:number,payload:ADVANCE.updateNormalAdvance) => {
+const updateNormalAdvane = async (employeeId:number,payload:ADVANCE.updateExceptionalAdvance) => {
 
   const advId = payload.id;
   const empId = employeeId;
   try {
     const advance = await Advance.findOneBy({id:advId,employee:empId,status:"waiting"});
-    if(advance?.type != 'normal'){
-      return 2;
+    console.log(advance)
+    if(advance!.type != "normal"){
+      return 3;
     }else {
       if(advance){
-        advance.amount =payload.amount;
-        advance.suggestionDate = payload.suggestionDate;
-        advance.save().then(result=>{
-          if(result){
-            return result;
-          } 
-          else 
-          return;
-        }).catch ((err)=>{return;});
+        advance.amount =payload.amount||advance.amount;
+        advance.suggestionDate = payload.suggestionDate||advance.suggestionDate;
+        console.log(advance)
+        const result = await advance.save();
+        if(result){
+          delete result["employee"];
+          return result;
+        }else {
+          return 2;
+        }
     }else 
         return 1;
-    }
+  }
   } catch (error) {
-    return 0;
-
-};
-};
-
-const updateExceptionalAdvane = async (employeeId:number,payload:ADVANCE.updateExceptionalAdvance) => {
-
-  const advId = payload.id;
-  const empId = employeeId;
-  try {
-    const advance = await Advance.findOneBy({id:advId,employee:empId,status:"waiting"});
-    if(advance?.type != 'exceptional'){
-      return 2;
-    }else {
-      if(advance){
-        advance.amount =payload.amount;
-        advance.installmentValue =payload.installmentValue;
-        advance.reason = payload.reason;
-        advance.suggestionDate = payload.suggestionDate;
-        advance.save().then(result=>{
-          if(result){
-            return result;
-          } 
-          else 
-          return;
-        }).catch ((err)=>{return;});
-    }else 
-        return 1;
-    }
-  } catch (error) {
+    console.log(error)
     return 0;
 
 };
 }
+
+const updateExceptionalAdvane= async (employeeId:number,payload:ADVANCE.updateExceptionalAdvance) => {
+
+  const advId = payload.id;
+  const empId = employeeId;
+  try {
+    const advance = await Advance.findOneBy({id:advId,employee:empId,status:"waiting"});
+    console.log(advance)
+    if(advance!.type != "exceptional"){
+      return 3;
+    }else {
+      if(advance){
+        advance.amount =payload.amount || advance.amount;
+        advance.installmentValue =payload.installmentValue || advance.installmentValue;
+        advance.reason = payload.reason || advance.reason;
+        advance.suggestionDate = payload.suggestionDate ||advance.suggestionDate;
+        console.log(advance)
+        const result = await advance.save();
+        if(result){
+          delete result["employee"];
+          return result;
+        }else {
+          return 2;
+        }
+    }else 
+        return 1;
+  }
+  } catch (error) {
+    console.log(error)
+    return 0;
+
+}}
+
+const UpdateAdvanceStatus = async (vacationId:number,status:string) => {
+  const advance = await  Advance.findOneBy({id:vacationId});
+  console.log('here8');
+  if(advance){
+    if(advance.status ==="waiting"){
+      advance.status = status;
+      const result = await advance.save()
+      if(result){
+        return result
+      }else return 2
+    }else return 1 ;
+  }else return 0;
+};
 
 
 export {
@@ -158,5 +190,6 @@ export {
   updateNormalAdvane,
   getAdvance,
   getAdvances,
-  updateExceptionalAdvane
+  updateExceptionalAdvane,
+  UpdateAdvanceStatus
 }

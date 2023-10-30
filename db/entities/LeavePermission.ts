@@ -10,6 +10,7 @@ import {
     Max,
 } from "class-validator"
 import { Employee } from "./Employee.js";
+import { Section } from "./Section.js";
 export type LeavePermissionState = "waiting" | "accepted" | "rejected"
 
 @Entity('leavePermissions')
@@ -38,11 +39,11 @@ export class LeavePermission extends BaseEntity {
     enum: ["waiting", "accepted", "rejected"],
     default: "waiting"
 })
-status: LeavePermissionState
+status: string
 
 
 @ManyToOne(() => Employee, (emp) => emp.leavePermissions, { cascade: true, eager: true })
-employee: Relation<Employee>
+employee?: number
 
   @CreateDateColumn({
     type: 'timestamp',

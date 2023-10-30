@@ -9,15 +9,20 @@ import {
     Min,
     Max,
 } from "class-validator"
-import { Name } from "./Name.js";
 
-@Entity('section_managers')
-export class SectionManager extends BaseEntity {
+@Entity('advertisements')
+export class Advertisement extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column(() => Name)
-  name: Name
+  @Column({ type: 'date', nullable: false })
+  date: Date;
+
+  @Column({ nullable: true,type:'text'})
+  content: string;
+
+  @Column({ nullable: true,type:'text'})
+  title: string;
 
   @CreateDateColumn({
     type: 'timestamp',

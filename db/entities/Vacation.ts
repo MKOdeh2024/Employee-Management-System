@@ -15,17 +15,22 @@ export class Vacation extends BaseEntity {
 
   @Column({ nullable: true,type:'text'})
   reason: string;
+  
+  @Column({
+    type: "enum",
+    enum: ["sick", "motherhood","other"],nullable:false})
+status?: string
 
   @Column({
     type: "enum",
     enum: ["waiting", "accepted", "rejected"],
     default: "waiting"
 ,nullable:false})
-status: VacationState
+type: string
 
 
     @ManyToOne(() => Employee, (emp) => emp.vacations, { cascade: true, eager: true })
-    employee: Relation<Employee>
+    employee?: number
 
 
   @CreateDateColumn({

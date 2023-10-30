@@ -1,14 +1,4 @@
 import { BaseEntity,OneToMany, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Relation } from "typeorm";
-import {
-    Contains,
-    IsInt,
-    Length,
-    IsEmail,
-    IsFQDN,
-    IsDate,
-    Min,
-    Max,
-} from "class-validator"
 import { Employee } from "./Employee.js";
 
 @Entity('sections')
