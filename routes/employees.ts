@@ -4,7 +4,7 @@ import { allowedTo, authenticate } from '../middlewares/auth/authenticate.js';
 import { authorize } from '../middlewares/auth/authorize.js';
 import { Section } from '../db/entities/Section.js';
 import { Employee } from '../db/entities/Employee.js';
-import { createEmployeeValidator, updateEmployeeValidator, deleteEmployeeValidator, getEmployeeValidator } from '../middlewares/validation/employee.js'
+import { createEmployeeValidator, updateEmployeeValidator, deleteEmployeeValidator, getEmployeeValidator,createSectionManagerValidator} from '../middlewares/validation/employee.js'
 import { getLeavePermissionValidator } from '../middlewares/validation/leavePermission.js';
 import { getAdvacneValidator } from '../middlewares/validation/advance.js';
 import { getVacationValidator } from '../middlewares/validation/vacation.js';
@@ -27,10 +27,11 @@ router.post('/', authenticate, allowedTo('manager'), createEmployeeValidator, as
 
 });
 
-
-router.post('/', authenticate, allowedTo('manager'), createEmployeeValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.post('/sectionManager', authenticate, allowedTo('manager'), createSectionManagerValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const section = await Section.findOneBy({ id: req.body.section });
+  console.log(section)
   if (section) {
+    console.log("here")
     insertSectionManager(req.body).then((data) => {
       if (data === 2) {
         res.send("there is already manager for this section!")
@@ -45,7 +46,7 @@ router.post('/', authenticate, allowedTo('manager'), createEmployeeValidator, as
       console.error(err);
       res.status(500).send(err);
     });
-  } else { res.send("please enter the section name correctly!") }
+  } else { res.send("please enter section correctly!") }
 
 });
 
