@@ -179,6 +179,7 @@ const insertSectionManager = async (payload: EMPLOYEE.createSectionManager) => {
             employee.advances = [];
             employee.vacations = [];
             employee.leavePermissions = [];
+            employee.section =payload.section;
             employee.status = payload.status;
             employee.gender = payload.gender;
             employee.roles = await Role.findBy({
