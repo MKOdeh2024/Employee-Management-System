@@ -40,7 +40,7 @@ jobs:
     - name: deploy
       run: docker compose -f docker-compose-prod.yml up -d
       env: 
-        DB_PASSWORD: ${{ secrets.BD_PASSWORD }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         GIT_VERSION: ${{ needs.build.outputs.image_version }}
     - name: print logs
       if: always() # this step will be executed always even if previous stpes fails
