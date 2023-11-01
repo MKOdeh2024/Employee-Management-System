@@ -14,17 +14,17 @@ export namespace ADVANCE {
     }
     export interface updateNormalAdvance {
       id:number;
-      amount:number;
-      suggestionDate:Date;
+      amount?:number;
+      suggestionDate?:Date;
     }
 
 
     export interface updateExceptionalAdvance {
       id:number;
-      amount:number;
-      suggestionDate:Date;
-      installmentValue:number;
-      reason:string;
+      amount?:number;
+      suggestionDate?:Date;
+      installmentValue?:number;
+      reason?:string;
     }
   
   }

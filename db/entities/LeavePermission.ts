@@ -42,7 +42,7 @@ status: LeavePermissionState
 
 
 @ManyToOne(() => Employee, (emp) => emp.leavePermissions, { cascade: true, eager: true })
-employee: Relation<Employee>
+employee?: number
 
   @CreateDateColumn({
     type: 'timestamp',

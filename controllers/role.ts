@@ -29,8 +29,6 @@ const insertRole = async (payload: EMPLOYEE.Role) => {
 
 const assignRole = async (payload: EMPLOYEE.roleAssign) => {
   console.log(payload);
-  // if(role){
-    // const name = payload.first+payload.mid+payload.last
   const employee = await Employee.findOneBy({
     id: payload.employeeId
   });

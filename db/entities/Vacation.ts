@@ -25,7 +25,7 @@ status: VacationState
 
 
     @ManyToOne(() => Employee, (emp) => emp.vacations, { cascade: true, eager: true })
-    employee: Relation<Employee>
+    employee?: number
 
 
   @CreateDateColumn({

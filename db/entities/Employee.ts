@@ -58,6 +58,12 @@ export class Employee extends BaseEntity {
 
 @Column({
   type: "set",
+  enum: ["male","female"],nullable:false
+})
+gender: string
+
+@Column({
+  type: "set",
   enum: ["married","single"],nullable:false
 })
 status: string
