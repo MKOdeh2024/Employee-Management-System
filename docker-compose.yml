@@ -6,7 +6,7 @@ services:
     image: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
-      - MYSQL_DATABASE=express-docker
+      - MYSQL_DATABASE=ems-docker
     volumes:
       - db-data:/var/lib/mysql
     ports:
