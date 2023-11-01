@@ -36,7 +36,7 @@ router.get('/advertisement',authenticate,allowedTo('manager'),getAdvertisementVa
 });
 
 router.get('/advertisements',authenticate,allowedTo('manager'),(req: express.Request, res: express.Response, next: express.NextFunction) => {
-      getAdvertisements().then((data) => {
+      getAdvertisements(req.body).then((data) => {
         if(data ===1){
           res.send("there is no advertisements posted yet!")
         }else if(data === 0){

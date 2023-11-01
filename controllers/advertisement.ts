@@ -1,4 +1,5 @@
-import { ADVERTISEMENT } from "../@types/advertisement.js";import { Advertisement } from "../db/entities/Advertisement.js";
+import { ADVERTISEMENT } from "../@types/advertisement.js";import { EMPLOYEE } from "../@types/employee.js";
+import { Advertisement } from "../db/entities/Advertisement.js";
 
 
 const insertAdvertisement = async (payload: ADVERTISEMENT.Item) => {
@@ -19,12 +20,25 @@ const insertAdvertisement = async (payload: ADVERTISEMENT.Item) => {
   }
 }
 
-const getAdvertisements = async () => {
+const getAdvertisements = async (payload:EMPLOYEE.paging) => {
     
     try {
-      const advertisements = await Advertisement.find()
+      const page = parseInt(payload.page)||1;
+      const pageSize = parseInt(payload.pageSize)||10;
+      const [advertisements, total] = await Advertisement.findAndCount({
+        skip: pageSize * (page - 1),
+          take: pageSize,
+          order: {
+            createdAt: 'ASC'
+          },
+      })
       if(advertisements){
-        return advertisements;
+        return {
+          page,
+          pageSize: advertisements.length,
+          total,
+          advertisements
+        };
       }
       else 
         return 1;

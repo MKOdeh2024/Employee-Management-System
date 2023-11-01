@@ -11,6 +11,7 @@ import { LeavePermission } from "../db/entities/LeavePermission.js";
 import { Section } from "../db/entities/Section.js";
 import bcrypt from "bcrypt"
 import { Complaint } from "../db/entities/Complaint.js";
+import { In } from "typeorm";
 
 
 const insertAdmin = async (payload: EMPLOYEE.createAdmin) => {
@@ -211,8 +212,33 @@ const getEmployee = async (id: number) => {
   });
 }
 
-const getEmployees = async () => {
-  return await Employee.findAndCount();
+const getEmployees = async (payload:EMPLOYEE.paging) => {
+  try {
+    const page = parseInt(payload.page)||1;
+    const pageSize = parseInt(payload.pageSize)||10;
+    const [employees, total] = await Employee.findAndCount({
+      skip: pageSize * (page - 1),
+        take: pageSize,
+        order: {
+          createdAt: 'ASC'
+        }
+    })
+    if(employees){
+      const employee = employees.map(({roles, ...rest}) => {
+        return rest;
+      });
+      return{
+        page,
+        pageSize: employee.length,
+        total,
+        employee
+      };
+    }
+    else 
+      return 1;
+  } catch (error) {
+    return 0;
+  }
 }
 
 const getSectionManagers = async () => {
@@ -266,20 +292,30 @@ const updateEmployee = async (payload: EMPLOYEE.updateEmployee) => {
   try {
     const employee = await Employee.findOneBy({ id: payload.id });
     console.log(employee)
+    let roleArray:any[]=[];
     if (employee) {
-      employee.salary = payload.salary || employee.salary;
-      employee.section = payload.section || employee.section;
-      employee.phoneNumber = payload.phoneNumber || employee.phoneNumber;
-      console.log(employee)
-      const result = await employee.save();
-      if (result) {
-        return result;
-      } else {
+      employee.roles.filter((role)=>{
+      roleArray .push(role.name);
+        return role.permissions
+      })
+      const sectiomManagerRole = roleArray.filter((role)=>role==='sectionManager')
+      console.log(sectiomManagerRole)
+      if(sectiomManagerRole && payload.section){
         return 2;
+      }else {
+        employee.salary = payload.salary || employee.salary;
+        employee.section = payload.section || employee.section;
+        employee.phoneNumber = payload.phoneNumber || employee.phoneNumber;
+        console.log(employee)
+        const result = await employee.save();
+        if (result) {
+          return result;
+        } else {
+          return 3;
+        }
       }
     } else
       return 1;
-
   } catch (error) {
     console.log(error)
     return 0;
@@ -356,12 +392,24 @@ const getAllRequests = async () => {
     const advances= await Advance.find()
     const vacations= await Vacation.find()
     const complaints= await Complaint.find()
+      const leavePermission = leavePermissions.map(({employee, ...rest}) => {
+        return rest;
+      });
+      const vacation = vacations.map(({employee, ...rest}) => {
+        return rest;
+      });
+      const advance = advances.map(({employee, ...rest}) => {
+        return rest;
+      });
+      const complaint = complaints.map(({employee, ...rest}) => {
+        return rest;
+      });
 
     let notifications:EMPLOYEE.Notifications = {
-      vacations :vacations,
-      advances:advances,
-      leavePermissions:leavePermissions,
-      complaints:complaints
+      vacations :vacation,
+      advances:advance,
+      leavePermissions:leavePermission,
+      complaints:complaint
     };
     return notifications;
   } catch (error) {
@@ -369,14 +417,27 @@ const getAllRequests = async () => {
   }
 };
 
-const getSectionRequests = async () => {
+const getSectionRequests = async (secId:number) => {
   try {
-    
-    const leavePermissions= await LeavePermission.find()
-    const vacations= await Vacation.find()
+    const [employees,total] =await Employee.findAndCountBy({section:secId})
+    let employeeIds:any[]=[];
+      employees.filter((emp)=>{
+      employeeIds.push(emp.id);
+        return emp.id
+      })
+      
+    const [leavePermissions,totalLeaves]= await LeavePermission.findAndCountBy({employee:In(employeeIds)})
+    const [vacations,totalVacations]= await Vacation.findAndCountBy({employee:In(employeeIds)})
+    const leavePermission = leavePermissions.map(({employee, ...rest}) => {
+      return rest;
+    });
+    const vacation = vacations.map(({employee, ...rest}) => {
+      return rest;
+    });
+
     let notifications:EMPLOYEE.SectionNotifications = {
-      vacations :vacations,
-      leavePermissions:leavePermissions
+      vacations :vacation,
+      leavePermissions:leavePermission
     };
     return notifications;
   } catch (error) {
@@ -406,6 +467,19 @@ const updatePassword = async (employeeId:number,payload:EMPLOYEE.changePassword)
   }
 };
 
+const getEmployeesCounter = async () => {
+  const [employees,total] =await Employee.findAndCount()
+  console.log(total);
+  console.log(employees);
+    if(total){
+      return{counter:total} 
+    }
+    else if (!total){
+      return 0;
+    }
+  
+};
+
 
 export {
   insertEmployee,
@@ -424,5 +498,6 @@ export {
   getAllRequests,
   getSectionManagers,
   getSectionRequests,
-  updatePassword
+  updatePassword,
+  getEmployeesCounter
 }

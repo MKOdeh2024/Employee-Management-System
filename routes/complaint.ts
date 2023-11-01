@@ -35,7 +35,7 @@ router.get('/complaint', authenticate, authorize('get_complaint'), getComplaintV
 });
 
 router.get('/complaints', authenticate, authorize('get_allComplaint'), (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  getComplaints(res.locals.employee.id).then((data) => {
+  getComplaints(res.locals.employee.id,req.body).then((data) => {
     if (data === 1) {
       res.send("there is no complaint requests for you")
     } else if (data === 0) {

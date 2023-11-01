@@ -22,6 +22,10 @@ export namespace EMPLOYEE {
     gender: string;
   }
 
+  export interface paging {
+    page: string;
+    pageSize: string;
+  }
   export interface createSectionManager {
     firstName: string;
     midName: string;
@@ -124,13 +128,13 @@ export namespace EMPLOYEE {
   }
 
   export interface Notifications {
-    advances: Advance[]; 
-    vacations: Vacation[]; 
-    leavePermissions: LeavePermission[];
-    complaints:Complaint[]; 
+    advances: any[]; 
+    vacations: any[]; 
+    leavePermissions: any[];
+    complaints:any[]; 
   }
   export interface SectionNotifications {
-    vacations: Vacation[]; 
-    leavePermissions: LeavePermission[]; 
+    vacations: any[]; 
+    leavePermissions: any[]; 
   }
 }
