@@ -8,6 +8,11 @@ var router = express.Router();
 
 router.post('/permission',authenticate,allowedTo('manager'), (req, res, next) => {
   insertPermission(req.body).then((data) => {
+    if(data ===1){
+      res.send("something went wrong , when creating permission")
+    }else if (data===0){
+      res.send("permission should be uniqe")
+    }else 
     res.status(201).send(data)
   }).catch(err => {
     console.error(err);

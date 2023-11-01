@@ -34,9 +34,9 @@ const dataSource = new DataSource({
     Complaint
   ],
   migrations: ['./**/migration/*.ts'],
-  synchronize: true,
-  
+  synchronize:true
 });
+
 
 dataSource.initialize().then(() => {
   console.log("Connected to DB!");

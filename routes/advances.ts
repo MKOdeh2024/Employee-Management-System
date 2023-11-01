@@ -35,19 +35,21 @@ router.get('/advance',authenticate,authorize('get_advacne'), getAdvacneValidator
       res.send(data)
   }).catch(err => {
     console.error(err);
-    res.status(500).send(err);
+    res.send(err);
   });
 });
 
 router.get('/advances',authenticate,authorize('get_allAdvacne'), (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.log("here")
   getAdvances(res.locals.employee.id,req.body).then((data) => {
-    if (data === 1) {
-      res.send("there is no advances for you")
-    } else
-      res.send(data)
+    if(data ===0){
+      res.send("something went wrong")
+    }else 
+    res.send(data)
   }).catch(err => {
+    console.log("here1")
     console.error(err);
-    res.status(500).send(err);
+    res.send(err);
   });
 });
 
@@ -140,6 +142,7 @@ router.put('/updateStatus',authenticate,allowedTo('manager'),async (req: express
       }
   }else res.send("Enter the status correctly");
 });
+
 
 
 

@@ -18,7 +18,7 @@ router.post('/',authenticate,authorize('post_vacation'),createVacationValidator,
     });
 });
 
-router.get('/vacation',authenticate,authorize('get_vacation'),getVacationValidator,(req: express.Request, res: express.Response, next: express.NextFunction)=> {
+router.get('/vacation', authenticate,authorize('get_vacation'),getVacationValidator,(req: express.Request, res: express.Response, next: express.NextFunction)=> {
     getVacation(res.locals.employee.id,req.body.id).then((data) => {
       if(data ===1){
         res.send("vacation not found!")

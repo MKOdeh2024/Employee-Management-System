@@ -51,7 +51,7 @@ router.delete('/',authenticate,allowedTo('manager'),deleteSectionValidator,(req:
     }else if(data ===1){
       res.send("vacation not found")
     }else
-    res.json({data:data, message:"vacation deleted"})
+    res.json({data:data, message:"section deleted"})
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);

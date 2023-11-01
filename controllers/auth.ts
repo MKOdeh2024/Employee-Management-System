@@ -12,7 +12,7 @@ const login = async (email: string, password: string) => {
     const employee = await Employee.findOneBy({
       email: email
     });
-
+    console.log(employee)
     const passwordMatching = await bcrypt.compare(password, employee?.password || '');
     if (employee && passwordMatching) {
       const token = jwt.sign({

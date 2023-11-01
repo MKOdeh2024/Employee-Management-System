@@ -18,7 +18,7 @@ export class Role extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ unique: true })
+  @Column({nullable:false,unique:true})
   name: string;
 
   @ManyToMany(() => Permission, { cascade: true, eager: true })
@@ -34,8 +34,4 @@ export class Role extends BaseEntity {
   })
   createdAt: Date;
 }
-
-// @ManyToMany(()=>Permission,permission=>permission.roles,{eager:true})
-// @JoinTable()
-// permissions:Permission[] | number[]
 

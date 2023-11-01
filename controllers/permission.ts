@@ -2,16 +2,26 @@ import { ArrayContainedBy } from "typeorm";
 import { EMPLOYEE } from "../@types/employee.js";
 import { Permission } from "../db/entities/Permission.js";
 import { Role } from "../db/entities/Role.js";
+import { create } from "domain";
 
 
 
 const insertPermission = async (payload: EMPLOYEE.Permission) => {
   try {
-    const permission = Permission.create({
-      name: payload.name
-    });
-    await permission.save();
-    return permission;
+    console.log("here")
+    const permission = await  Permission.findOneBy({name:payload.name})
+    console.log(permission)
+    if(!permission){
+        const permissionCreator =new Permission();
+        permissionCreator.name =payload.name;
+      const created = await permissionCreator.save();
+      console.log(created)
+      if(created){
+        return created;
+      }else return 1;
+      
+    }else return 0;
+    
   } catch (error) {
     console.log(error);
     throw ("Something went wrong");

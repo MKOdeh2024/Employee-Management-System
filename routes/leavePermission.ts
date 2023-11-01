@@ -94,7 +94,7 @@ router.put('/updateStatus',authenticate,allowedTo('manager'),async (req: express
         }else if(data === 1){
           res.send("leavePermission not found")
         }else
-        res.send("leave permission deleted")
+        res.send("leave permission updated")
         }).catch(err => {
           console.log("here2")
           res.status(500).send(err);

@@ -121,13 +121,20 @@ const updateLeavePermission= async (employeeId:number,payload:LEAVE.updateLeaveP
 const UpdateLeavePermissionStatus = async (permissionId:number,status:string) => {
     const leavePermission = await  LeavePermission.findOneBy({id:permissionId});
     if(leavePermission){
+      console.log("here1")
       if(leavePermission.status ==="waiting"){
+              console.log("here2")
+
         const employee = await Employee.findOneBy({id:Number(leavePermission.employee!.id)});
         if(employee){
+          console.log("here3")
           console.log(employee.vacationDays)
           const hours = employee.leaveHours + leavePermission.duration;
           if(hours>=8 && status ==="accepted"){
+                  console.log("here4")
             if(employee.vacationDays === 0){
+                    console.log("here5")
+
               leavePermission.status ='rejected';
               leavePermission.save()
               .then(result =>{
@@ -166,6 +173,7 @@ const UpdateLeavePermissionStatus = async (permissionId:number,status:string) =>
             }
           }
           else if(hours < 8 ){
+                  console.log("here6")
             employee.leaveHours=hours;
             console.log(employee.leaveHours)
             const result = await employee.save()

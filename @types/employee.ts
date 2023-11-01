@@ -87,7 +87,6 @@ export namespace EMPLOYEE {
   }
 
   export interface Permission {
-    id: number;
     name: string;
   }
 

@@ -5,13 +5,11 @@ import { Vacation } from "../db/entities/Vacation.js";
 
 
 const insertVacation = async (employeeId:number,payload: VACATION.Item) => {
+  console.log("here")
     try {
-        console.log(employeeId)
         console.log(payload)
-
     const vacation =new Vacation();
     vacation.suggestionDate = new Date(payload.suggestionDate);
-    vacation.status ="waiting";
     vacation.duration = payload.duration;
     vacation.employee = employeeId;
     vacation.reason = payload.reason;
