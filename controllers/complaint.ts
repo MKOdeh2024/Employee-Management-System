@@ -1,4 +1,5 @@
 import { COMPLAINT } from "../@types/complaint.js";
+import { EMPLOYEE } from "../@types/employee.js";
 import { Complaint } from "../db/entities/Complaint.js";
 
 
@@ -21,14 +22,28 @@ const insertComplaint = async (empId:number,payload: COMPLAINT.Item) => {
   }
 }
 
-const getComplaints = async (empId: number) => {
+const getComplaints = async (empId: number,payload:EMPLOYEE.paging) => {
   try {
-    const complaints = await Complaint.find({ where: { employee: empId }, order: { id: "ASC" } })
+    const page = parseInt(payload.page)||1;
+    const pageSize = parseInt(payload.pageSize)||10;
+    const [complaints, total] = await Complaint.findAndCount({
+      skip: pageSize * (page - 1),
+        take: pageSize,
+        order: {
+          createdAt: 'ASC'
+        },
+        where:{employee:empId}
+    })
     if (complaints) {
       const complaint = complaints.map(({ employee, ...rest }) => {
         return rest;
       });
-      return complaint;
+      return{
+        page,
+        pageSize: complaint.length,
+        total,
+        complaint
+      };
     }
     else
       return 1;

@@ -1,5 +1,5 @@
 import express from 'express';
-import { deleteEmployee, findAdvance, findLeavePermission, findVacation, getAllRequests, getEmployee, getEmployees, getPersonalInformation, getSectionManagers, getSectionRequests, insertEmployee, insertSectionManager, updateEmployee, updatePassword, updatePersonalInformation, } from '../controllers/employee.js';
+import { deleteEmployee, findAdvance, findLeavePermission, findVacation, getAllRequests, getEmployee, getEmployees, getEmployeesCounter, getPersonalInformation, getSectionManagers, getSectionRequests, insertEmployee, insertSectionManager, updateEmployee, updatePassword, updatePersonalInformation, } from '../controllers/employee.js';
 import { allowedTo, authenticate } from '../middlewares/auth/authenticate.js';
 import { authorize } from '../middlewares/auth/authorize.js';
 import { Section } from '../db/entities/Section.js';
@@ -60,7 +60,7 @@ router.get('/employee', authenticate, allowedTo('manager'), getEmployeeValidator
 });
 
 router.get('/employees', authenticate, allowedTo('manager'), (req, res, next) => {
-  getEmployees().then((data) => {
+  getEmployees(req.body).then((data) => {
     res.send(data)
   }).catch(err => {
     console.error(err);
@@ -151,25 +151,30 @@ router.get('/vacation', authenticate, authorize('get_vacation'), getVacationVali
 });
 
 router.delete('/', authenticate, allowedTo('manager'), deleteEmployeeValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  deleteEmployee(req.body.id).then((data) => {
-    if (data === 1) {
-      res.send("vacation not found")
-    } else
-      res.send(data)
-  }).catch(err => {
-    console.error(err);
-    res.status(500).send(err);
-  });
+  if(req.body.id === 1 || req.body.id===2){
+    res.send("you can't delete the admin or the manager from the system")
+  }else {
+    deleteEmployee(req.body.id).then((data) => {
+      if (data === 1) {
+        res.send("vacation not found")
+      } else
+        res.send(data)
+    }).catch(err => {
+      console.error(err);
+      res.status(500).send(err);
+    });
+  }
 });
 
 router.put('/', authenticate, allowedTo('manager'), updateEmployeeValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const emp = await Employee.findOneBy({ id: req.body.id });
   if (emp) {
     updateEmployee(req.body).then((data) => {
-      if (data === 2) {
+      if (data === 3) {
         res.send("something went wrong, when saving employee information")
-      }
-      else if (data === 1) {
+      }else if (data === 2) {
+        res.send("can't change section manager section")
+      }else if (data === 1) {
         res.send("employee not found")
       } else if (data) { res.send(data) }
       else {
@@ -195,8 +200,8 @@ router.get('/allRequests', authenticate, allowedTo('manager'), (req, res, next) 
   });
 });
 
-router.get('/allRequests', authenticate, allowedTo('seactioManager'), (req, res, next) => {
-  getSectionRequests().then((data) => {
+router.get('/allSectionRequests', authenticate, allowedTo('seactioManager'), (req, res, next) => {
+  getSectionRequests(res.locals.employee.section).then((data) => {
     if(data){res.send(data)}
     else res.send("something went wrong")
   }).catch(err => {
@@ -204,6 +209,16 @@ router.get('/allRequests', authenticate, allowedTo('seactioManager'), (req, res,
   });
 });
 
+
+
+router.get('/employeeCounter', authenticate, allowedTo('manager'), (req, res, next) => {
+  getEmployeesCounter().then((data) => {
+    if(data){res.send(data)}
+    else res.send("there is no employees on system yet")
+  }).catch(err => {
+    res.status(500).send(err);
+  });
+});
 export default router;
 
 

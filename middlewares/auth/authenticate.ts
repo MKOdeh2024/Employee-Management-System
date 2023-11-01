@@ -17,6 +17,7 @@ const authenticate = async (
     const decoded = jwt.decode(token, { json: true });
     const employee = await Employee.findOneBy({ email: decoded?.email || '' })
     res.locals.employee = employee;
+    console.log(employee?.roles)
     console.log("authenticate")
     next();
   } else {

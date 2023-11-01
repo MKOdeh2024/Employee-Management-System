@@ -170,7 +170,6 @@ const updateExceptionalAdvane= async (employeeId:number,payload:ADVANCE.updateEx
 
 const UpdateAdvanceStatus = async (vacationId:number,status:string) => {
   const advance = await  Advance.findOneBy({id:vacationId});
-  console.log('here8');
   if(advance){
     if(advance.status ==="waiting"){
       advance.status = status;

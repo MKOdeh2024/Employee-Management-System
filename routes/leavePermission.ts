@@ -35,7 +35,7 @@ router.get('/leavePermission',authenticate,authorize('get_leavePermission'),getL
 });
 
 router.get('/leavePermissions',authenticate,authorize('get_allLeavePermission'),(req: express.Request, res: express.Response, next: express.NextFunction) => {
-      getLeavePermissions(res.locals.employee.id).then((data) => {
+      getLeavePermissions(res.locals.employee.id,req.body).then((data) => {
         if(data ===1){
           res.send("there is no leavePermission requests for you")
         }else if(data === 0){

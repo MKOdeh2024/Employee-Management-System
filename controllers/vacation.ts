@@ -1,3 +1,4 @@
+import { EMPLOYEE } from "../@types/employee.js";
 import { VACATION } from "../@types/vacation.js";
 import { Employee } from "../db/entities/Employee.js";
 import { Vacation } from "../db/entities/Vacation.js";
@@ -22,15 +23,28 @@ const insertVacation = async (employeeId:number,payload: VACATION.Item) => {
   }
 }
 
-const getVacations = async (employeeId:number) => {
-    const empId = employeeId;
+const getVacations = async (employeeId:number,payload:EMPLOYEE.paging) => {
     try {
-      const vacations = await Vacation.find({where :{employee:empId},order:{id: "ASC"}})
+      const page = parseInt(payload.page)||1;
+      const pageSize = parseInt(payload.pageSize)||10;
+      const [vacations, total] = await Vacation.findAndCount({
+        skip: pageSize * (page - 1),
+          take: pageSize,
+          order: {
+            createdAt: 'ASC'
+          },
+          where:{employee:employeeId}
+      })
       if(vacations){
         const vac = vacations.map(({employee, ...rest}) => {
           return rest;
         });
-        return vac;
+        return{
+          page,
+          pageSize: vac.length,
+          total,
+          vac
+        };
       }
       else 
         return 1;

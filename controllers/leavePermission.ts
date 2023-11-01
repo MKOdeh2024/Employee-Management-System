@@ -1,3 +1,4 @@
+import { EMPLOYEE } from "../@types/employee.js";
 import { LEAVE } from "../@types/leavePermission.js";
 import { Employee } from "../db/entities/Employee.js";
 import { LeavePermission, LeavePermissionState } from "../db/entities/LeavePermission.js";
@@ -26,15 +27,29 @@ const insertLeavePermission = async (employeeId:number,payload: LEAVE.Item) => {
   }
 }
 
-const getLeavePermissions = async (employeeId:number) => {
+const getLeavePermissions = async (employeeId:number,payload:EMPLOYEE.paging) => {
     const empId = employeeId;
     try {
-      const leavePermissions = await LeavePermission.find({where :{employee:empId},order:{id: "ASC"}})
+      const page = parseInt(payload.page)||1;
+      const pageSize = parseInt(payload.pageSize)||10;
+      const [leavePermissions, total] = await LeavePermission.findAndCount({
+        skip: pageSize * (page - 1),
+          take: pageSize,
+          order: {
+            createdAt: 'ASC'
+          },
+          where:{employee:employeeId}
+      })
       if(leavePermissions){
         const leavePermission = leavePermissions.map(({employee, ...rest}) => {
           return rest;
         });
-        return leavePermission;
+        return{
+          page,
+          pageSize: leavePermission.length,
+          total,
+          leavePermission
+        };
       }
       else 
         return 1;

@@ -119,8 +119,8 @@ router.put('/exceptional',authenticate,authorize('update_advacne'), updateExcept
 
 router.put('/updateStatus',authenticate,allowedTo('manager'),async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (req.body.status==="accepted"||req.body.status === "rejected"){
-    const leave = await Advance.findOneBy({id:req.body.id});
-    if(leave){
+    const adv = await Advance.findOneBy({id:req.body.id});
+    if(adv){
       UpdateAdvanceStatus(req.body.id,req.body.status).then((data) => {
         
         if (data === 2) {

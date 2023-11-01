@@ -34,7 +34,7 @@ router.get('/vacation',authenticate,authorize('get_vacation'),getVacationValidat
 });
 
 router.get('/vacations',authenticate,authorize('get_allVacation'),(req, res, next) => {
-      getVacations(res.locals.employee.id).then((data) => {
+      getVacations(res.locals.employee.id,req.body).then((data) => {
         if(data ===1){
           res.send("there is no vacations requests for you")
         }else if(data === 0){
