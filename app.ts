@@ -11,15 +11,9 @@ import vacationsRouter from './routes/vacations.js';
 import advertisementsRouter from './routes/advertisement.js';
 import leavePermissionsRouter from './routes/leavePermission.js';
 import complaintsRouter from './routes/complaint.js';
-
 import authRouter from './routes/auth.js'
 import adminRouter from './routes/admin.js'
-import {setUp} from './middlewares/setup/setup.js'
-
-
-
 import './db/dataSource.js';
-import { authenticate } from './middlewares/auth/authenticate.js';
 
 
 var app = express();

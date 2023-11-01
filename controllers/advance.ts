@@ -45,30 +45,32 @@ const insertExceptionalAdvance = async (employeeId:number,payload: ADVANCE.excep
 }
 
 const getAdvances = async (employeeId:number,payload:ADVANCE.getAdvances) => {
+  console.log("here")
   const empId = employeeId;
+  console.log(employeeId)
   try {
-    const page = parseInt(payload.page)||0;
-    const pageSize = parseInt(payload.pageSize)||5;
-    const [advances, total] = await Advance.findAndCount({
+    const page = parseInt(payload.page)||1;
+    const pageSize = parseInt(payload.pageSize)||10;
+    const [complaints, total] = await Advance.findAndCount({
       skip: pageSize * (page - 1),
-      take: pageSize,
-      order: {
-        createdAt: 'ASC'
-      },where:{employee:empId}
+        take: pageSize,
+        order: {
+          createdAt: 'ASC'
+        },
+        where:{employee:empId}
     })
-    if(advances){
-      const adv = advances.map(({employee, ...rest}) => {
+    if (complaints) {
+      const complaint = complaints.map(({ employee, ...rest }) => {
         return rest;
       });
-      return {
+      return{
         page,
-        pageSize: advances.length,
+        pageSize: complaint.length,
         total,
-        adv
+        complaint
       };
-
     }
-    else 
+    else
       return 1;
   } catch (error) {
     return 0;
@@ -168,9 +170,12 @@ const updateExceptionalAdvane= async (employeeId:number,payload:ADVANCE.updateEx
 
 }}
 
-const UpdateAdvanceStatus = async (vacationId:number,status:string) => {
-  const advance = await  Advance.findOneBy({id:vacationId});
+const UpdateAdvanceStatus = async (advId:number,status:string) => {
+  const advance = await  Advance.findOneBy({id:advId});
+  console.log(advance)
+  
   if(advance){
+    console.log(advance)
     if(advance.status ==="waiting"){
       advance.status = status;
       const result = await advance.save()
@@ -180,6 +185,7 @@ const UpdateAdvanceStatus = async (vacationId:number,status:string) => {
     }else return 1 ;
   }else return 0;
 };
+
 
 
 export {

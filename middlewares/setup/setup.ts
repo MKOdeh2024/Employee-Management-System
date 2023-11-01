@@ -5,6 +5,7 @@ import { insertAdmin } from "../../controllers/employee.js";
 import { insertRole } from "../../controllers/role.js";
 import { AdminProfile } from "../../db/entities/AdminProfile.js"
 import { Role } from "../../db/entities/Role.js";
+import { rmSync } from 'fs';
 
 
 const admin:EMPLOYEE.createAdmin = {
@@ -51,6 +52,8 @@ const setUp =async (req:express.Request,res:express.Response,next:express.NextFu
         }
         res.send()
     } catch (error) {
+        res.send("you already setupded")
+
         throw("something went wrong on set up the system"+error)
     }
 }

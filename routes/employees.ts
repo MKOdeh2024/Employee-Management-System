@@ -117,7 +117,7 @@ router.put('/personalInfo', authenticate, authorize('update_personalInfo'), (req
   })
 });
 
-router.get('/leavePermission', authenticate, authorize('get_leavePermission'), getLeavePermissionValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/leavePermission', authenticate, allowedTo('manager'), getLeavePermissionValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   findLeavePermission(req.body.id).then((data) => {
     if (data) {
       res.send(data)
@@ -128,7 +128,7 @@ router.get('/leavePermission', authenticate, authorize('get_leavePermission'), g
   });
 });
 
-router.get('/advacne', authenticate, authorize('get_Advance'), getAdvacneValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/advacne', authenticate, getAdvacneValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   findAdvance(req.body.id).then((data) => {
     if (data) {
       res.send(data)
@@ -139,7 +139,7 @@ router.get('/advacne', authenticate, authorize('get_Advance'), getAdvacneValidat
   });
 });
 
-router.get('/vacation', authenticate, authorize('get_vacation'), getVacationValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+router.get('/vacation', authenticate, getVacationValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   findVacation(req.body.id).then((data) => {
     if (data) {
       res.send(data)
@@ -200,7 +200,7 @@ router.get('/allRequests', authenticate, allowedTo('manager'), (req, res, next) 
   });
 });
 
-router.get('/allSectionRequests', authenticate, allowedTo('seactioManager'), (req, res, next) => {
+router.get('/allSectionRequests', authenticate, allowedTo('sectionManager'), (req, res, next) => {
   getSectionRequests(res.locals.employee.section).then((data) => {
     if(data){res.send(data)}
     else res.send("something went wrong")

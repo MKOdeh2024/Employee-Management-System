@@ -9,9 +9,9 @@ const authorize = (api: string) => {
     next: express.NextFunction
   ) => {
     const permission = await Permission.findOneBy({name:api});
-    console.log(permission)
+    console.log(res.locals.employee)
     if(permission){
-    const roles: EMPLOYEE.Role[] = res.locals.employee.roles;
+    const roles: EMPLOYEE.Role[] = res.locals.employee!.roles;
     console.log(roles)
     // let permissions:Permission []=[]
     let permissions:any [] = [];
@@ -34,6 +34,7 @@ const authorize = (api: string) => {
     }
   }
 }
+
 
 export {
   authorize

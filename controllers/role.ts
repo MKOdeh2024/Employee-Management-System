@@ -20,7 +20,6 @@ const insertRole = async (payload: EMPLOYEE.Role) => {
     return role;
   } catch (error) {
     console.log(error);
-
     throw ("Something went wrong");
   }
 }
