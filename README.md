@@ -44,16 +44,6 @@ typeorm
 
 ## AWS
 
-To use this dwitter app, follow these steps:
-
-1. Clone the repository to your local machine: 
-`git clone https://github.com/Mahmoud-Hijjeh/dwitter_app-django.git`.
-2. Create a virtual environment: `python3 -m venv venv`.
-3. Activate the virtual environment: `source venv/bin/activate`.
-4. Install the required packages with `pip install -r requirements.txt`.
-5. Apply migrations: `python manage.py migrate`.
-6. Run the development server with `python manage.py runserver`.
-7. In your web browser, go to `http://127.0.0.1:8000/` to access the app.
 
 ## License
 This project is licensed under the MIT License.
