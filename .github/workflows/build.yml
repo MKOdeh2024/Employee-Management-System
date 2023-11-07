@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [test1]
+    branches: ["test1"]
   pull_request:
-    branches: [test1]
+    branches: ["test1"]
 
 jobs:
   build:
@@ -31,19 +31,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}    
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ghcr.io/mkodeh2024/online-examination-system-1:${{ steps.image_version.outputs.gitsha }}
+        run: docker build . --file Dockerfile --tag ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
 
       - name: Publish Docker image
-        run: docker build . --file Dockerfile --tag ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
+        run: docker push ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
 
       - name: Get EC2 instance IPs
         id: get_instance_ips
         run: |
-          instances=$(aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=mka-asg" --query 'Reservations[*].Instances[*].PublicIpAddress' --output json | jq -r '.[][]')
-          echo 'ip=$instances' >> $GITHUB_OUTPUT    
+          instances=$(aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=mka-asg" --query 'Reservations[*].Instances[*].PublicIpAddress' --output json | jq --compact-output 'flatten')
+          echo "ips=$instances" >> $GITHUB_OUTPUT
+        
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEBACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEBSECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
      
 
@@ -65,20 +66,23 @@ jobs:
           user: github
           ssh-private-key: ${{ secrets.EMS_KEY }}
 
+      - name: Login to Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy
         run: docker compose -f docker-compose-prod.yml up -d
         env:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           GIT_VERSION: ${{ needs.build.outputs.image_version }}
-          #SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          #DB_HOST: ${{ secrets.DB_HOST }}
-          #DB_PORT: ${{ secrets.DB_PORT }}
-          #DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          #DB_NAME: ${{ secrets.DB_NAME }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_NAME: ${{ secrets.DB_NAME }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: 
-        instances=$(aws ec2 describe-instances --filters "Name=tag:aws:autoscaling:groupName,Values=online-exam-asg" --query 'Reservations[*].Instances[*].PublicIpAddress' --output json | jq --compact-output 'flatten')
-        echo "ips=$instances" >> $GITHUB_OUTPUT
