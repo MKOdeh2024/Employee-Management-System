@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { Employee } from '../../db/entities/Employee.js';
 
+//Express middleware for JWT authentication. Validates the token, fetches employee details from the DB, and adds to response locals if valid. 
 const authenticate = async (
   req: express.Request,
   res: express.Response,

@@ -6,18 +6,20 @@ import { assignRoleValidator, createRoleValidator } from '../middlewares/validat
 var router = express.Router();
 
 
-router.post('/role',createRoleValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Route for creating a new role
+router.post('/role', createRoleValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   insertRole(req.body).then((data) => {
-    res.status(201).send(data)
+    res.status(201).send(data);
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
 });
 
-router.post('/assignRole',assignRoleValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Route for assigning roles
+router.post('/assignRole', assignRoleValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   assignRole(req.body).then((data) => {
-    res.status(201).send(data)
+    res.status(201).send(data);
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);

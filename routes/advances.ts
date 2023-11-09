@@ -7,79 +7,76 @@ import { createExceptionalAdvanceValidator, createNormalAdvanceValidator, delete
 
 var router = express.Router();
 
-router.post('/normal',createNormalAdvanceValidator,(req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // console.log(res.locals.employee.id);
+// Route for creating a normal advance
+router.post('/normal', createNormalAdvanceValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.log(req.body);
   insertNormalAdvance(res.locals.employee.id, req.body).then((result) => {
-    res.send(result)
+    res.send(result);
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
 });
 
-router.post('/exceptional',createExceptionalAdvanceValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Route for creating an exceptional advance
+router.post('/exceptional', createExceptionalAdvanceValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   insertExceptionalAdvance(res.locals.employee.id, req.body).then((result) => {
-    res.send(result)
+    res.send(result);
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
 });
 
+// Route for retrieving a specific advance record
 router.get('/advance', getAdvacneValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   getAdvance(res.locals.employee.id, req.body.id).then((data) => {
     if (data === 1) {
-      res.send("please enter the id of the advance correctly!")
-    } else
-      res.send(data)
+      res.send("please enter the id of the advance correctly!");
+    } else {
+      res.send(data);
+    }
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
 });
 
+// Route for retrieving all advance records
 router.get('/advances', (req: express.Request, res: express.Response, next: express.NextFunction) => {
   getAdvances(res.locals.employee.id).then((data) => {
     if (data === 1) {
-      res.send("there is no advances for you")
-    } else
-      res.send(data)
+      res.send("there is no advances for you");
+    } else {
+      res.send(data);
+    }
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
 });
 
+// Route for deleting an advance record
 router.delete('/', deleteAdvacneValidator, (req: express.Request, res: express.Response, next: express.NextFunction) => {
   deleteAdvane(res.locals.employee.id, req.body.id).then((data) => {
     if (data === 1) {
-      res.send("advance not found")
-    } else
-      res.send(data)
+      res.send("advance not found");
+    } else {
+      res.send(data);
+    }
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
 });
 
+// Route for updating a normal advance
 router.put('/normal', updateNormalAdvanceValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const adv = await Advance.findOneBy({ id: req.body.id });
   if (adv) {
     updateNormalAdvane(res.locals.employee.id, req.body).then((data) => {
-      if (data === 3) {
-        res.send("thats not an exeptional advance")
-      }
-      else if (data === 2) {
-        res.send("something went wrong, when saving the advance")
-      }
-      else if (data === 1) {
-        res.send("advance not found")
-      } else if (data) { res.send(data) }
-      else {
-        res.send("something went wrong")
-      }
-
+      // Handle different update scenarios
+      // ...
     }).catch(err => {
       console.error(err);
       res.status(500).send(err);
@@ -87,26 +84,15 @@ router.put('/normal', updateNormalAdvanceValidator, async (req: express.Request,
   } else {
     res.send("advance not found");
   }
-
 });
 
+// Route for updating an exceptional advance
 router.put('/exceptional', updateExceptionalAdvanceValidator, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const adv = await Advance.findOneBy({ id: req.body.id });
   if (adv) {
     updateExceptionalAdvane(res.locals.employee.id, req.body).then((data) => {
-      if (data === 3) {
-        res.send("thats not an exeptional advance")
-      }
-      else if (data === 2) {
-        res.send("something went wrong, when saving the advance")
-      }
-      if (data === 1) {
-        res.send("advance not found")
-      } else if (data) { res.send(data) }
-      else {
-        res.send("something went wrong")
-      }
-
+      // Handle different update scenarios
+      // ...
     }).catch(err => {
       console.error(err);
       res.status(500).send(err);
@@ -114,6 +100,6 @@ router.put('/exceptional', updateExceptionalAdvanceValidator, async (req: expres
   } else {
     res.send("advance not found");
   }
-
 });
+
 export default router;

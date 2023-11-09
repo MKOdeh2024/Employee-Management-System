@@ -1,6 +1,7 @@
 import express from 'express';
 import { EMPLOYEE } from '../../@types/employee.js';
 
+//Express middleware "authorize" checks user permissions for a specific API
 const authorize = (api: string) => {
   return (
     req: express.Request,
