@@ -16,9 +16,11 @@ jobs:
     outputs:
       ec2_ips: ${{ steps.get_instance_ips.outputs.ips }}
       image_version: ${{ steps.image_version.outputs.gitsha }}
+      GITHUB_OUTPUT: ${{ steps.get_instance_ips.outputs.GITHUB_OUTPUT }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set image version (tag)
         id: image_version
@@ -29,7 +31,8 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}    
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
 
@@ -46,7 +49,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.DEBACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.DEBSECRET_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-     
+          GITHUB_OUTPUT: ${{ steps.get_instance_ips.outputs.GITHUB_OUTPUT }}
 
   deploy:
     needs: ['build']
@@ -57,7 +60,8 @@ jobs:
         ip: ${{ fromJson(needs.build.outputs.ec2_ips) }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Configure Docker host
         uses: khaledez/configure-docker-host@v1
@@ -86,3 +90,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
+          GITHUB_OUTPUT: ${{ needs.build.outputs.GITHUB_OUTPUT }}
