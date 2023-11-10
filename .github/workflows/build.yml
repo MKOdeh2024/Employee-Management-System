@@ -39,8 +39,7 @@ jobs:
       - name: Publish Docker image
         run: docker push ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
 
-      - name: Configure AWS Credentials
-        run: aws configure set aws_access_key_id ${{ secrets.DEBACCESS_KEY }} && aws configure set aws_secret_access_key ${{ secrets.DEBSECRET_KEY }} && aws configure set region ${{ secrets.AWS_REGION }}
+      
 
       - name: Get EC2 instance IPs
         id: get_instance_ips
@@ -49,8 +48,8 @@ jobs:
           echo "ips=$instances" >> $GITHUB_OUTPUT
         
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.DEBACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEBSECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           GITHUB_OUTPUT: ${{ steps.get_instance_ips.outputs.GITHUB_OUTPUT }}
 
