@@ -39,6 +39,9 @@ jobs:
       - name: Publish Docker image
         run: docker push ghcr.io/mkodeh2024/ems-docker:${{steps.image_version.outputs.gitsha}}
 
+      - name: Configure AWS Credentials
+        run: aws configure set aws_access_key_id ${{ secrets.DEBACCESS_KEY }} && aws configure set aws_secret_access_key ${{ secrets.DEBSECRET_KEY }} && aws configure set region ${{ secrets.AWS_REGION }}
+
       - name: Get EC2 instance IPs
         id: get_instance_ips
         run: |
