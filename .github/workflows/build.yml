@@ -91,3 +91,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           GITHUB_OUTPUT: ${{ needs.build.outputs.GITHUB_OUTPUT }}
+      
+      - name: Debug
+        run: |
+          echo "AWS CLI Output: $instances"
+          echo "GITHUB_OUTPUT: $GITHUB_OUTPUT"
+
